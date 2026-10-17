@@ -1,16 +1,37 @@
 #!/usr/bin/env bash
-# Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
+# ISO-mode installer for this KooL-flavored i3 setup
+# usa los dotfiles DE ESTE REPO (no clona el setup genérico de EndeavourOS)
+# evita eos-settings-i3wm para no chocar con eos-settings-xfce4
+# uso: ./i3_install_isomode <username>
+
 username="$1"
-git clone https://github.com/endeavouros-team/endeavouros-i3wm-setup.git
-cd endeavouros-i3wm-setup/etc/skel/
-cp -R .config .local .icons /home/$username/
-cp .Xresources .gtkrc-2.0 .profile set_once.sh xed.dconf /home/$username/
-cd /
-rm -rf endeavouros-i3wm-setup
-chown -R $username:$username /home/$username
-chmod -R +x /home/$username/.config/i3/scripts
-chmod +x /home/$username/set_once.sh
-wget https://raw.githubusercontent.com/endeavouros-team/EndeavourOS-packages-lists/master/i3
-pacman -S --needed --noconfirm - < i3
-rm i3
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SKEL="$REPO_DIR/etc/skel"
+
+if [[ -z "$username" ]]; then
+    echo "uso: $0 <username>"
+    exit 1
+fi
+
+TARGET="/home/$username"
+
+echo "==> Copiando dotfiles a $TARGET ..."
+cp -R "$SKEL/.config/." "$TARGET/.config/"
+[ -d "$SKEL/.local" ] && cp -R "$SKEL/.local/." "$TARGET/.local/"
+[ -d "$SKEL/.icons" ] && cp -R "$SKEL/.icons/." "$TARGET/.icons/"
+cp "$SKEL/.Xresources" "$SKEL/.gtkrc-2.0" "$SKEL/.profile" "$SKEL/set_once.sh" "$SKEL/xed.dconf" "$TARGET/"
+
+chown -R "$username:$username" "$TARGET"
+chmod +x "$TARGET/.config/i3/scripts/"*
+chmod +x "$TARGET/set_once.sh"
+
+echo "==> Instalando paquetes..."
+pacman -S --needed --noconfirm \
+    i3-wm i3blocks i3lock dunst rofi feh picom \
+    kitty thunar scrot xclip xdotool playerctl \
+    polkit-gnome dex xss-lock jq yad imagemagick \
+    alsa-utils xorg-xsetroot
+
 systemctl enable lightdm
+
+echo "==> Listo. Inicia sesión en i3."

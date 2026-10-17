@@ -1,15 +1,39 @@
 #!/usr/bin/env bash
-# Maintainer: joekamprad [joekamprad //a_t// endeavouros.com]
-git clone https://github.com/endeavouros-team/endeavouros-i3wm-setup.git
-cd endeavouros-i3wm-setup/etc/skel/
-cp -R .config .local .icons ~/
-chmod -R +x ~/.config/i3/scripts
-cp .Xresources .profile xed.dconf .gtkrc-2.0 ~/
-dbus-launch dconf load / < ~/xed.dconf
-rm xed.dconf
-cd ..
-rm -rf endeavouros-i3wm-setup
-wget https://raw.githubusercontent.com/endeavouros-team/EndeavourOS-packages-lists/master/i3
-sudo pacman -S --needed - < i3
-rm i3
-#eos-packagelist --install "i3-Window-Manager"
+# Install script for this KooL-flavored i3 setup (EndeavourOS)
+# Usa los dotfiles DE ESTE REPO (no clona el setup genérico de EndeavourOS)
+# Evita eos-settings-i3wm para no chocar con eos-settings-xfce4
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SKEL="$REPO_DIR/etc/skel"
+
+echo "==> Instalando paquetes (repo oficial)..."
+sudo pacman -S --needed --noconfirm \
+    i3-wm i3blocks i3lock dunst rofi feh picom \
+    kitty thunar scrot xclip xdotool playerctl \
+    polkit-gnome dex xss-lock jq yad imagemagick \
+    alsa-utils xorg-xsetroot
+
+echo "==> Instalando rofi-greenclip (AUR)..."
+if command -v yay >/dev/null 2>&1; then
+    yay -S --needed --noconfirm rofi-greenclip
+else
+    echo "    [!] yay no encontrado — instala rofi-greenclip manualmente para el clipboard manager"
+fi
+
+echo "==> Copiando dotfiles a \$HOME (sobreescribe configs de i3/kitty/rofi/picom/dunst)..."
+cp -R "$SKEL/.config/." "$HOME/.config/"
+[ -d "$SKEL/.local" ] && cp -R "$SKEL/.local/." "$HOME/.local/"
+[ -d "$SKEL/.icons" ] && cp -R "$SKEL/.icons/." "$HOME/.icons/"
+cp "$SKEL/.Xresources" "$SKEL/.profile" "$SKEL/.gtkrc-2.0" "$HOME/"
+[ -f "$SKEL/xed.dconf" ] && dbus-launch dconf load / < "$SKEL/xed.dconf"
+
+echo "==> Dando permisos a los scripts..."
+chmod +x "$HOME/.config/i3/scripts/"*
+
+echo
+echo "==> Listo."
+echo "    1. Crea tu carpeta de wallpapers:  mkdir -p ~/Pictures/wallpapers"
+echo "    2. Cierra sesión y elige la sesión i3 en tu display manager."
+echo "    3. Verifica: SUPER+Return (kitty), SUPER+D (rofi), SUPER+H (cheat sheet)."
+echo "    Si i3 no aparece en la pantalla de sesión:  pacman -Q i3-wm"
+echo "    y comprueba que exista /usr/share/xsessions/i3.desktop"

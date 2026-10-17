@@ -21,86 +21,110 @@ Basado en el setup oficial de EndeavourOS ([endeavouros-team/endeavouros-i3wm-se
 
 ## Instalación
 
-### 1. Instalar dependencias
+### 1. Clonar el repo
 
 ```bash
-# paquetes del repo oficial
-sudo pacman -S --needed kitty thunar firefox feh scrot i3lock dunst picom \
-    rofi xclip xdotool imagemagick playerctl amixer alsa-utils \
-    polkit-gnome dex xss-lock i3blocks jq yad
-
-# paquetes de la AUR
-yay -S rofi-greenclip
-```
-
-> `rofi-greenclip` es necesario solo para el clipboard manager (SUPER+Alt+V). Si no lo instalas, comenta la línea `greenclip daemon` en el config de i3.
-
-### 2. Clonar el repo
-
-```bash
-git clone <URL-de-este-repo> ~/dotfiles_endeavouros
+git clone https://github.com/lucioamarilla/dotfiles_endeavouros.git ~/dotfiles_endeavouros
 cd ~/dotfiles_endeavouros/endeavouros-i3wm-setup-main
 ```
 
-### 3. Copiar los dotfiles a tu home
+### 2. Instalar
 
-**Opción A — manual (recomendada, puedes revisar antes):**
-
-```bash
-# i3 config + scripts
-cp -r etc/skel/.config/i3 ~/.config/
-
-# kitty (terminal)
-mkdir -p ~/.config/kitty
-cp -r etc/skel/.config/kitty/* ~/.config/kitty/
-
-# rofi (temas y configs)
-cp -r etc/skel/.config/rofi/* ~/.config/rofi/
-
-# picom (compositor con blur)
-mkdir -p ~/.config/picom
-cp etc/skel/.config/picom/picom.conf ~/.config/picom/
-
-# dunst (notificaciones)
-cp -r etc/skel/.config/dunst ~/.config/
-
-# feh wallpaper por defecto de EndeavourOS (opcional)
-# lo gestiona el autostart del config de i3
-
-# resto del skel (gtk, perfiles, etc.) según necesites
-cp etc/skel/.profile ~/
-cp etc/skel/set_once.sh ~/
-```
-
-**Opción B — con el instalador original de EndeavourOS** (sobreescribe tu `$HOME` actual, úsalo solo en un sistema limpio):
+**Opción A — instalador automático (recomendada):**
 
 ```bash
 ./i3_install
 ```
 
-### 4. Dar permisos a los scripts
+El script:
+
+- Instala los paquetes necesarios con `pacman` (i3-wm, kitty, rofi, picom, feh, scrot, etc.)
+- Instala `rofi-greenclip` desde la AUR con `yay`
+- Copia los dotfiles de **este repo** a `$HOME` (i3, kitty, rofi, picom, dunst, .profile)
+- Da permisos a los scripts
+
+> **Nota importante**: este instalador **no** usa `eos-settings-i3wm` (el paquete genérico de EndeavourOS), así que evita el error de conflicto con `eos-settings-xfce4`. Los configs de este repo ya son completos; no necesitas ese paquete.
+
+**Opción B — manual (para revisar qué se copia):**
 
 ```bash
+# dependencias (repo oficial)
+sudo pacman -S --needed i3-wm i3blocks i3lock dunst rofi feh picom \
+    kitty thunar scrot xclip xdotool playerctl \
+    polkit-gnome dex xss-lock jq yad imagemagick
+
+# AUR
+yay -S rofi-greenclip
+
+# dotfiles
+cp -r etc/skel/.config/i3 ~/.config/
+mkdir -p ~/.config/kitty && cp -r etc/skel/.config/kitty/* ~/.config/kitty/
+cp -r etc/skel/.config/rofi/* ~/.config/rofi/
+mkdir -p ~/.config/picom && cp etc/skel/.config/picom/picom.conf ~/.config/picom/
+cp -r etc/skel/.config/dunst ~/.config/
+cp etc/skel/.profile ~/
+
+# permisos
 chmod +x ~/.config/i3/scripts/*
 ```
 
-### 5. Crear tu carpeta de wallpapers
+### 3. Crear tu carpeta de wallpapers
 
 ```bash
 mkdir -p ~/Pictures/wallpapers
 # copia tus imágenes ahí; el selector (SUPER+W) y el random (CTRL+ALT+W) la usan
 ```
 
-### 6. Cerrar sesión y entrar en i3
+### 4. Cerrar sesión y entrar en i3
 
 En el gestor de inicio de sesión (ly/sddm/gdm) elige la sesión **i3**. Si es la primera vez, i3 te preguntará si quieres generar el config por defecto: elige **NO** (ya tienes el config copiado).
 
-### 7. Verificar
+### 5. Verificar
 
 - `SUPER+Return` debe abrir **kitty**
 - `SUPER+D` debe abrir **rofi**
 - `SUPER+H` o `F1` debe abrir el cheat sheet
 - `SUPER+W` debe abrir el selector de wallpapers (si no hay imágenes, agrégales a `~/Pictures/wallpapers`)
+
+## Solución de problemas
+
+### Error: "eos-settings-i3wm: /etc/skel/.Xresources ya existe (es parte de eos-settings-xfce4)"
+
+Si aparece al instalar `eos-settings-i3wm` a mano (por ejemplo desde la lista de paquetes oficial con `pacman -S --needed - < i3`), tienes XFCE settings instalado y chocan los archivos de skel. Soluciones:
+
+```bash
+# si NO usas XFCE: quitar el settings de XFCE y reinstalar
+sudo pacman -Rns eos-settings-xfce4
+sudo pacman -S eos-settings-i3wm
+
+# si SÍ usas XFCE: sobreescribir solo los 3 archivos en conflicto
+# (ojo: es .Xresources, no .Xsources)
+sudo pacman -S eos-settings-i3wm \
+    --overwrite '/etc/skel/.Xresources' \
+    --overwrite '/etc/skel/.config/autostart/firewall-applet.desktop' \
+    --overwrite '/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml'
+```
+
+> Con el instalador de este repo (`./i3_install`) no necesitas `eos-settings-i3wm`: instala los paquetes directamente y copia los configs desde `etc/skel/` de este repo.
+
+### La sesión i3 no aparece en el login (display manager)
+
+Casi siempre es porque `i3-wm` no está instalado. Si una instalación por pacman falla (por ejemplo por el conflicto de arriba), **se cancela toda la transacción** y ningún paquete se instala — ni siquiera `i3-wm`.
+
+Diagnóstico:
+
+```bash
+pacman -Q i3-wm
+ls /usr/share/xsessions/
+```
+
+Si `i3-wm` no está instalado o falta `/usr/share/xsessions/i3.desktop`:
+
+```bash
+sudo pacman -S --needed i3-wm i3blocks i3lock
+```
+
+Tras eso, cierra sesión y la sesión **i3** debe aparecer en el selector del display manager.
 
 ## Keybindings principales
 
@@ -178,8 +202,9 @@ endeavouros-i3wm-setup-main/
 │   ├── rofi/                   # temas rasi (incluye search/emoji/clipboard/keybinds)
 │   ├── picom/picom.conf        # compositor con blur
 │   └── dunst/                  # notificaciones
-├── i3_install                  # instalador original EndeavourOS (opcional)
-└── packages-repository.txt     # lista de paquetes oficial EndeavourOS
+├── i3_install                  # instalador (paquetes + copia dotfiles de este repo)
+├── i3_install_isomode          # instalador para modo ISO (lightdm)
+└── packages-repository.txt     # lista de paquetes oficial EndeavourOS (referencia)
 ```
 
 ## Créditos
