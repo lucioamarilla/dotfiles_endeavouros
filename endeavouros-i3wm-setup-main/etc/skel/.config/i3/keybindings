@@ -1,0 +1,78 @@
+i3 Keybindings cheat sheet (estilo KooL Hyprland):
+
+Basado en el setup EndeavourOS-i3 adaptado a los keybinds de KooL Hyprland.
+
+Para referencia consulte: https://discovery.endeavouros.com/window-tiling-managers/i3-wm/
+
+ = windows key (SUPER)
+
+### Terminal y apps
+SUPER+Return                kitty (terminal)
+SUPER+Shift+Return          kitty dropdown (flotante, centrada)
+SUPER+B                     navegador web por defecto (xdg-open)
+SUPER+E                     Thunar (file manager)
+SUPER+D                     lanzador de apps (rofi drun)
+SUPER+T                     switcher de ventanas (rofi window)
+
+### Ventanas
+SUPER+Q                     cerrar ventana (WM_DELETE)
+SUPER+Shift+Q               matar proceso de la ventana activa (kill -9)
+SUPER+Shift+F               fullscreen
+SUPER+Ctrl+F                fake fullscreen (flotante a tamaño completo)
+SUPER+Space                 toggle flotar/tiling
+SUPER+Shift+Space           cambiar foco entre tiling/floating
+SUPER+Alt+L                 ciclar layout (default/split/stacking/tabbed)
+SUPER+Ctrl+S                layout stacking
+SUPER+Ctrl+G                layout tabbed
+SUPER+Ctrl+H                split horizontal
+SUPER+Ctrl+V                split vertical
+
+### Foco / mover / resize
+SUPER+flechas               mover foco
+SUPER+Ctrl+flechas          mover ventana
+SUPER+Shift+flechas         redimensionar ventana
+Alt+Tab                     siguiente ventana
+
+### Workspaces
+SUPER+[1-0]                 ir al workspace
+SUPER+Shift+[1-0]           mover ventana al workspace
+SUPER+Tab                   workspace siguiente
+SUPER+Shift+Tab             workspace anterior
+SUPER+Ctrl+N                abrir workspace vacío
+
+### Screenshots (scrot)
+Print                       pantalla completa
+SUPER+Shift+Print           región con el ratón
+SUPER+Shift+S               región con el ratón (alias)
+SUPER+Ctrl+Print            pantalla completa con delay 5 seg
+SUPER+Ctrl+Shift+Print      pantalla completa con delay 10 seg
+Alt+Print                   ventana activa
+
+### Wallpapers (feh)
+SUPER+W                     selector de wallpapers (rofi)
+SUPER+Shift+W               efectos de wallpaper (ImageMagick)
+CTRL+ALT+W                  wallpaper aleatorio
+
+### Rofi tools
+SUPER+S                     búsqueda Google (rofi)
+SUPER+Alt+V                 clipboard manager (greenclip + rofi)
+SUPER+Alt+E                 selector de emojis (rofi)
+SUPER+Shift+K               keybinds buscables (rofi)
+
+### Sistema
+CTRL+ALT+P                  power menu (rofi)
+CTRL+ALT+L                  lock screen (alias: SUPER+L)
+CTRL+ALT+Del                salir de i3 (sale de inmediato)
+CTRL+ALT+B                  ocultar/mostrar barra
+SUPER+Alt+R                 recargar i3 + dunst + greenclip
+SUPER+Shift+N               panel de notificaciones (dunst history)
+SUPER+H / F1                cheat sheet de keybinds
+
+### Compositor (picom)
+SUPER+Alt+O                 toggle blur on/off
+SUPER+Ctrl+O                toggle opacidad de la ventana activa
+
+### Multimedia
+XF86Audio*                  volumen / media (playerctl)
+SUPER+P                     cambiar dispositivo de audio
+SUPER+Shift+P               power profiles (rofi)
