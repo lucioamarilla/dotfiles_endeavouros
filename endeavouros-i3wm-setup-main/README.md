@@ -188,6 +188,19 @@ feh --bg-fill /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
 
 Cámbialo por el que quieras, o usa `SUPER+W` tras iniciar sesión.
 
+## Tutorial de migración (ThinkPad L15 Gen 1)
+
+Para una migración completa desde Ubuntu (incluye backup por Samba hacia otro
+disco, particionado de 256 GB con hibernación, instalación de EndeavourOS,
+XFCE+i3 con este dotfile, y reinstalación de apps cribadas):
+
+- **[TUTORIAL_ENDEAVOUROS_THINKPAD_L15.md](TUTORIAL_ENDEAVOUROS_THINKPAD_L15.md)** — tutorial paso a paso.
+- **[install-apps.sh](install-apps.sh)** — instalador de las ~60 apps seleccionadas (pacman + AUR + flatpak).
+
+> `install-apps.sh` requiere `yay` (incluido en EndeavourOS). Timeshift se
+> instala aparte como primer paso manual; Packet Tracer requiere el `.deb`
+> manual de Cisco NetAcad (pasos en el tutorial).
+
 ## Estructura del repo
 
 ```
@@ -204,6 +217,8 @@ endeavouros-i3wm-setup-main/
 │   └── dunst/                  # notificaciones
 ├── i3_install                  # instalador (paquetes + copia dotfiles de este repo)
 ├── i3_install_isomode          # instalador para modo ISO (lightdm)
+├── install-apps.sh             # instalador masivo de apps (perfil DevOps/Redes)
+├── TUTORIAL_ENDEAVOUROS_THINKPAD_L15.md  # tutorial definitivo de migración
 └── packages-repository.txt     # lista de paquetes oficial EndeavourOS (referencia)
 ```
 
